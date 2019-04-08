@@ -1,10 +1,14 @@
 package com.khartec.waltz.service.allocation;
 
+import com.khartec.waltz.common.ListUtilities;
 import com.khartec.waltz.model.allocation.AllocationType;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.khartec.waltz.common.ListUtilities.asList;
 import static com.khartec.waltz.model.allocation.AllocationType.FIXED;
@@ -89,5 +93,36 @@ public class AllocationUtilitiesTest {
     public void cannotCalculateFloatForFixedAllocationsGreaterThan100EvenIfYouHaveAFloat() {
         AllocationUtilities.calculateFloatingPercentage(asList(anyFloat, fx50, fx100));
     }
+
+    @Test
+    public void toFloat() {
+
+        ArrayList<Tuple3<AllocationType, BigDecimal, String>> allocs = ListUtilities.newArrayList(
+                tuple(FIXED, BigDecimal.valueOf(42), "A"),
+                tuple(FIXED, BigDecimal.valueOf(8), "B"),
+                tuple(FLOATING, BigDecimal.valueOf(50), "C")
+        );
+
+        ArrayList<Tuple3<AllocationType, BigDecimal, String>> allocations = ListUtilities.newArrayList(
+                tuple(FIXED, BigDecimal.valueOf(42), "A"),
+                tuple(FIXED, BigDecimal.valueOf(8), "B"),
+                tuple(FLOATING, BigDecimal.valueOf(50), "D"),
+                tuple(FLOATING, BigDecimal.valueOf(50), "E"),
+                tuple(FLOATING, BigDecimal.valueOf(50), "F"),
+                tuple(FLOATING, BigDecimal.valueOf(50), "G")
+        );
+
+
+
+
+        List<Tuple3<AllocationType, BigDecimal, String>> newAllocs = AllocationUtilities.toFloat(allocs, "B");
+
+        //assertEquals(BigDecimal.valueOf(50), AllocationUtilities.toFloat(anyFloat, asList(anyFloat, fx50)));
+        //assertEquals(BigDecimal.valueOf(50), AllocationUtilities.toFloat(fx50, asList(anyFloat, fx50)));
+        //assertEquals(BigDecimal.valueOf(50), AllocationUtilities.toFloat(fx50, asList(fx50, fx50)));
+    }
+
+
+
 
 }
